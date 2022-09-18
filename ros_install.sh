@@ -62,7 +62,9 @@ echo "Download the ROS keys"
 roskey=`apt-key list | grep "ROS Builder"` && true # make sure it returns true
 if [ -z "$roskey" ]; then
   echo "No ROS key, adding"
-  sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+  #sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+  sudo apt install -y curl # if you haven't already installed curl
+  curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 fi
 
 echo "Updating & upgrading all packages"
@@ -85,7 +87,7 @@ then
 	python3-catkin-lint \
 	python3-catkin-tools \
 	python3-rosinstall \
-	ros-$ROS_DISTRO-desktop
+	ros-$ROS_DISTRO-desktop-full
 else
    sudo apt install -y \
 	liburdfdom-tools \
@@ -98,8 +100,13 @@ else
 	python-catkin-lint \
 	python-catkin-tools \
 	python-rosinstall \
-	ros-$ROS_DISTRO-desktop
+  python-rosinstall-generator \
+  build-essential \
+	ros-$ROS_DISTRO-desktop-full
 fi
+
+echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
+source ~/.bashrc
 
 # Only init if it has not already been done before
 if [ ! -e /etc/ros/rosdep/sources.list.d/20-default.list ]; then
