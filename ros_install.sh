@@ -71,7 +71,7 @@ echo "Updating & upgrading all packages"
 sudo apt-get update
 sudo apt-get dist-upgrade -y
 
-echo "Installing ROS"
+echo "Installing ROS $ROS_DISTRO"
 
 # Support for Python 3 in Noetic
 if [ "$ROS_DISTRO" = "noetic" ]
@@ -87,7 +87,8 @@ then
 	python3-catkin-lint \
 	python3-catkin-tools \
 	python3-rosinstall \
-	ros-$ROS_DISTRO-desktop-full
+	ros-$ROS_DISTRO-desktop-full; \
+  echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 else
    sudo apt install -y \
 	liburdfdom-tools \
@@ -102,11 +103,10 @@ else
 	python-rosinstall \
   python-rosinstall-generator \
   build-essential \
-	ros-$ROS_DISTRO-desktop-full
+	ros-$ROS_DISTRO-desktop-full; \
+  echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 fi
 
-echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
-source ~/.bashrc
 
 # Only init if it has not already been done before
 if [ ! -e /etc/ros/rosdep/sources.list.d/20-default.list ]; then
@@ -115,5 +115,5 @@ fi
 rosdep update
 
 echo "Done installing ROS"
-
+echo "Please type in terminal : source ~/.bashrc"
 exit 0
