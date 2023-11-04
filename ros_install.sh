@@ -87,7 +87,7 @@ then
 	python3-catkin-lint \
 	python3-catkin-tools \
 	python3-rosinstall \
-	ros-$ROS_DISTRO-desktop-full; \
+	ros-$ROS_DISTRO-desktop-full
   echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
 else
    sudo apt install -y \
@@ -103,7 +103,7 @@ else
 	python-rosinstall \
   python-rosinstall-generator \
   build-essential \
-	ros-$ROS_DISTRO-desktop-full; \
+	ros-$ROS_DISTRO-desktop-full
   echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 fi
 
