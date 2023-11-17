@@ -39,32 +39,42 @@ case $version in
   "saucy" | "trusty" | "vivid" | "wily" | "xenial" | "bionic" | "focal")
   ;;
   *)
-    echo "ERROR: This script will only work on Ubuntu Saucy(13.10) / Trusty(14.04) / Vivid / Wily / Xenial / Bionic / Focal. Exit."
+    echo "ERROR: This script will only work on Ubuntu Saucy(13.10) / Trusty(14.04) / Vivid / Wily / Xenial / Bionic / Focal / Foxy. Exit."
     exit 0
 esac
 
-relesenum=`grep DISTRIB_DESCRIPTION /etc/*-release | awk -F 'Ubuntu ' '{print $2}' | awk -F ' LTS' '{print $1}'`
-if [ "$relesenum" = "14.04.2" ]
+releasenum=`grep DISTRIB_DESCRIPTION /etc/*-release | awk -F 'Ubuntu ' '{print $2}' | awk -F ' LTS' '{print $1}'`
+if [ "$releasenum" = "14.04.2" ]
 then
-  echo "Your ubuntu version is $relesenum"
+  echo "Your ubuntu version is $releasenum"
   echo "Intstall the libgl1-mesa-dev-lts-utopic package to solve the dependency issues for the ROS installation specifically on $relesenum"
   sudo apt-get install -y libgl1-mesa-dev-lts-utopic
 else
-  echo "Your ubuntu version is $relesenum"
+  echo "Your ubuntu version is $releasenum"
 fi
 
 echo "Add the ROS repository"
-if [ ! -e /etc/apt/sources.list.d/ros-latest.list ]; then
+if [ "$ROS_DISTRO" = "foxy" ]
+then
+  sudo apt-get update
+  sudo apt-get install -y software-properties-common
+  sudo add-apt-repository -y universe
+  sudo apt-get install -y curl gnupg2 lsb-release build-essential
+  sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+else
+if [ ! -e /etc/apt/sources.list.d/ros-latest.list ]; 
+then
   sudo sh -c "echo \"deb http://packages.ros.org/ros/ubuntu ${version} main\" > /etc/apt/sources.list.d/ros-latest.list"
+  echo "Download the ROS keys"
+  roskey=`apt-key list | grep "ROS Builder"` && true # make sure it returns true
+  if [ -z "$roskey" ]; then
+    echo "No ROS key, adding"
+    #sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+    sudo apt install -y curl # if you haven't already installed curl
+    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+  fi
 fi
-
-echo "Download the ROS keys"
-roskey=`apt-key list | grep "ROS Builder"` && true # make sure it returns true
-if [ -z "$roskey" ]; then
-  echo "No ROS key, adding"
-  #sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
-  sudo apt install -y curl # if you haven't already installed curl
-  curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 fi
 
 echo "Updating & upgrading all packages"
@@ -89,6 +99,14 @@ then
 	python3-rosinstall \
 	ros-$ROS_DISTRO-desktop-full
   echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
+elif [ "$ROS_DISTRO" = "foxy" ]
+then
+  sudo apt-get install -y ros-$ROS_DISTRO-desktop \
+  python3-argcomplete \
+  python3-colcon-common-extensions \
+  python3-rosdep python3-vcstool  \
+  ros-dev-tools
+  echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 else
    sudo apt install -y \
 	liburdfdom-tools \

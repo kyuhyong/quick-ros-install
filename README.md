@@ -22,6 +22,7 @@ sudo ./ros_install.sh melodic
 ```
 설치가 완료되면 재부팅을 권장합니다.  
 참고로 roscore, turtlesim으로 테스트는 아래 catkin_install 수행 후 실행 바랍니다.  
+2023.11.17현재 melodic, noetic 그리고 foxy 버전의 설치가 확인되었습니다.
 
 
 ## catkin_ws 설치 및 추가 패키지 설치
@@ -50,4 +51,15 @@ MASTER주소가 192.168.1.1 인 경우
 ```
 ./ros-ipset.sh 192.168.1.1
 ```
+
+## ros_bash_setup.sh
+
+사용자의 .bashrc 파일에 alias설정을 추가하여 터미널에 ROS distro를 입력하여 설정하도록 합니다.
+`noetic`을 사용하는 경우 터미널에 다음을 입력합니다.
+```
+./ros_bash_setup noetic
+```
+이제 터미널에 `noetic`을 입력하면 자동으로 `source /opt/ros/noetic/setup.bash`를 수행합니다.
+
+  
 ---
