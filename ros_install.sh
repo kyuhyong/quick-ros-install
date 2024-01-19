@@ -34,9 +34,9 @@ version=`lsb_release -sc`
 echo ""
 echo "INSTALLING ROS USING quick_ros_install --------------------------------"
 echo ""
-echo "Checking the Ubuntu version"
+echo "Checking the Ubuntu version $version"
 case $version in
-  "saucy" | "trusty" | "vivid" | "wily" | "xenial" | "bionic" | "focal")
+  "saucy" | "trusty" | "vivid" | "wily" | "xenial" | "bionic" | "focal" | "jammy")
   ;;
   *)
     echo "ERROR: This script will only work on Ubuntu Saucy(13.10) / Trusty(14.04) / Vivid / Wily / Xenial / Bionic / Focal / Foxy. Exit."
@@ -54,7 +54,7 @@ else
 fi
 
 echo "Add the ROS repository"
-if [ "$ROS_DISTRO" = "foxy" ]
+if [ "$ROS_DISTRO" = "foxy" ] | [ "$ROS_DISTRO" = "humble" ];
 then
   sudo apt-get update
   sudo apt-get install -y software-properties-common
@@ -99,14 +99,14 @@ then
 	python3-rosinstall \
 	ros-$ROS_DISTRO-desktop-full
   echo "source /opt/ros/noetic/setup.bash" >> ~/.bashrc
-elif [ "$ROS_DISTRO" = "foxy" ]
+elif [ "$ROS_DISTRO" = "foxy" ] | [ "$ROS_DISTRO" = "humble" ];
 then
   sudo apt-get install -y ros-$ROS_DISTRO-desktop \
   python3-argcomplete \
   python3-colcon-common-extensions \
   python3-rosdep python3-vcstool  \
   ros-dev-tools
-  echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+  echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 else
    sudo apt install -y \
 	liburdfdom-tools \
@@ -132,6 +132,6 @@ if [ ! -e /etc/ros/rosdep/sources.list.d/20-default.list ]; then
 fi
 rosdep update
 
-echo "Done installing ROS"
+echo "Done installing ROS $ROS_DISTRO"
 echo "Please type in terminal : source ~/.bashrc"
 exit 0
